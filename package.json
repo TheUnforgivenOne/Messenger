@@ -1,0 +1,17 @@
+{
+  "name": "messenger",
+  "version": "0.0.1",
+  "packageManager": "yarn@3.4.1",
+  "scripts": {
+    "start": "yarn workspaces foreach -pi -v run start",
+    "server": "yarn workspace monorepo-server run start",
+    "shared": "yarn workspace monorepo-shared run start"
+  },
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
+  "repository": "https://github.com/TheUnforgivenOne/Messenger.git",
+  "license": "MIT"
+}
