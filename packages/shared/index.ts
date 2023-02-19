@@ -1,2 +1,1 @@
-export * from './src/user';
-export * from './src/sample';
+export * from './src/interfaces';
