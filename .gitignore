@@ -1,4 +1,9 @@
+# Yarn temporaries
 .yarn/cache
-.yarn/install_state.gz
+.yarn/install-state.gz
 
+# Dependencies
 node_modules
+
+# Local secrets
+**/.env.local

@@ -12,6 +12,9 @@ const initalizeApp = () => {
 
   app.use(requestsLogger, json());
 
+  app.use('/', (req, res) => {
+    res.json({ message: 'hello there' });
+  });
   app.use('/user', UserRouter);
   app.use(noEndpointHandler);
 
