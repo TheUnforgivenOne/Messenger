@@ -3,10 +3,10 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 
 const verifyUser: RequestHandler = (req, res, next) => {
   const token = req.cookies?.token;
-  if (!token) res.status(401).json({ message: 'Not Autorized' });
+  if (!token) return res.status(401).json({ message: 'Not Autorized' });
 
   try {
-    const decodedToken: JwtPayload = jwt.verify(
+    const decodedToken = jwt.verify(
       token,
       process.env.JWT_SECRET
     ) as JwtPayload;

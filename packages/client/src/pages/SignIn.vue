@@ -1,6 +1,7 @@
 <script lang="ts">
 import RequestBuilder from '../utils/RequestBuilder';
 import { ISignInParams } from 'monorepo-shared';
+import store from '../store';
 
 export default {
   data() {
@@ -23,7 +24,7 @@ export default {
         password: this.password,
       };
 
-      await RequestBuilder.post({
+      const response = await RequestBuilder.post({
         endpoint: '/api/user/signin',
         body: singInParams,
       });
@@ -31,11 +32,10 @@ export default {
       this.username = '';
       this.password = '';
 
+      store.setSignedIn(!!response?.data?.token);
       this.$router.push('/');
     },
   },
-
-  mounted() {},
 };
 </script>
 

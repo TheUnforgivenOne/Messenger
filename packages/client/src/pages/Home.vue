@@ -1,10 +1,12 @@
 <script lang="ts">
 import RequestBuilder from '../utils/RequestBuilder';
+import store from '../store';
 
 export default {
   data() {
     return {
       response: '',
+      store,
     };
   },
 
@@ -17,6 +19,12 @@ export default {
 
   mounted() {
     this.fetchData();
+  },
+
+  watch: {
+    'store.signedId'() {
+      this.fetchData();
+    },
   },
 };
 </script>

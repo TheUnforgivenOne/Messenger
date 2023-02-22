@@ -40,8 +40,6 @@ export default {
       this.$router.push('/signin');
     },
   },
-
-  mounted() {},
 };
 </script>
 
