@@ -1,10 +1,10 @@
-import { ILoginParams, IUser } from 'monorepo-shared';
+import { ISignInParams, IUser } from 'monorepo-shared';
 import UserRepository from '../../dataAccess/repositories/UserRepository';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 class UserService {
-  async registerUser(userCreds: IUser) {
+  async signUpUser(userCreds: IUser) {
     // Check if username already taken
     const user = await UserRepository.getUserByUsername(userCreds.username);
     if (user) throw new Error('This username is already taken');
@@ -21,7 +21,7 @@ class UserService {
     return { message: `User ${newUser.username} created` };
   }
 
-  async loginUser(loginCreds: ILoginParams) {
+  async signInUser(loginCreds: ISignInParams) {
     // Check if user exist
     const user = await UserRepository.getUserByUsername(loginCreds.username);
     if (!user) throw new Error('Incorrect username');
@@ -43,12 +43,9 @@ class UserService {
     return { message: 'Logged in', data: { token } };
   }
 
-  async logoutUser(token: string) {
-    // Decode token
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-
+  async signOutUser(userId: string) {
     // Check if user exist
-    const user = UserRepository.getUserById(decodedToken?.userId);
+    const user = UserRepository.getUserById(userId);
     if (!user) throw new Error('Wrong user id');
 
     return { message: 'Logged out' };

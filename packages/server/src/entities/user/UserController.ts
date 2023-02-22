@@ -4,26 +4,28 @@ import catchErrors from '../../decorators/catchErrors';
 
 class UserController {
   @catchErrors
-  async register(req: Request, res: Response) {
+  async signUp(req: Request, res: Response) {
     // Body validation
-    const data = await UserService.registerUser(req.body);
+    const response = await UserService.signUpUser(req.body);
 
-    res.json(data);
+    res.json(response);
   }
 
   @catchErrors
-  async login(req: Request, res: Response) {
+  async signIn(req: Request, res: Response) {
     // Body validation
-    const data = await UserService.loginUser(req.body);
+    const response = await UserService.signInUser(req.body);
 
-    res.json(data);
+    res.cookie('token', response.data.token);
+    res.json(response);
   }
 
   @catchErrors
-  async logout(req: Request, res: Response) {
-    const data = await UserService.logoutUser(req.body?.token);
+  async signOut(req: Request, res: Response) {
+    const response = await UserService.signOutUser(req?.userId);
 
-    res.json(data);
+    res.clearCookie('token');
+    res.json(response);
   }
 }
 

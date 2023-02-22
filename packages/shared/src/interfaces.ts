@@ -1,8 +1,8 @@
-export interface ILoginParams {
+export interface ISignInParams {
   username: string;
   password: string;
 }
 
-export interface IUser extends ILoginParams {
+export interface IUser extends ISignInParams {
   email: string;
 }

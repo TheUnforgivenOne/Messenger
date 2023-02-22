@@ -4,6 +4,7 @@
     "module": "commonjs",
     "allowJs": true,
     "esModuleInterop": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "typeRoots": ["./src/types"]
   }
 }
