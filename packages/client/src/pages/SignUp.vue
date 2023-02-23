@@ -33,6 +33,7 @@
 <script lang="ts">
 import { IUser } from 'monorepo-shared';
 import RequestBuilder from '../utils/RequestBuilder';
+import store from '../store';
 
 export default {
   data() {
@@ -58,11 +59,12 @@ export default {
         password: this.password,
       };
 
-      await RequestBuilder.post({
+      const response = await RequestBuilder.post({
         endpoint: '/api/user/signup',
         body: userCreds,
       });
 
+      store.setUser({ ...response.data });
       this.toggleDialog(false);
     },
   },

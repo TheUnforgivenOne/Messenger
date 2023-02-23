@@ -26,18 +26,18 @@ export default {
     },
     async onSignOut() {
       await RequestBuilder.post({ endpoint: '/api/user/signout' });
-      store.setSignedIn(false);
+      store.resetUser();
     },
   },
 
   mounted() {
     const cookie = parseCookie(document.cookie);
-    store.setSignedIn(!!cookie?.token);
+    store.setUser({ username: cookie?.username, token: cookie?.token });
     this.fetchData();
   },
 
   watch: {
-    'store.signedId'() {
+    'store.user'() {
       this.fetchData();
     },
   },
@@ -48,6 +48,9 @@ export default {
   <h1>Home</h1>
   <sign-in />
   <sign-up />
-  <button v-if="store.signedId" @click="onSignOut">Sign Out</button>
+  <v-sheet v-if="store.user.token">
+    Hello, {{ store.user.username }}
+    <v-btn @click="onSignOut">Sign Out</v-btn>
+  </v-sheet>
   {{ response }}
 </template>

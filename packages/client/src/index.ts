@@ -1,9 +1,8 @@
 import { createApp } from 'vue';
 import App from './App.vue';
-import 'vuetify/styles';
-
 import router from './router';
 import { createVuetify } from 'vuetify';
+import 'vuetify/styles';
 
 const vuetify = createVuetify();
 const app = createApp(App);

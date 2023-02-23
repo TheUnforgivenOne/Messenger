@@ -55,8 +55,7 @@ export default {
         body: signInParams,
       });
 
-      store.setSignedIn(!!response?.data?.token);
-
+      store.setUser({ ...response.data });
       this.toggleDialog(false);
     },
   },

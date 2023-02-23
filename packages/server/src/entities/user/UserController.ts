@@ -8,6 +8,8 @@ class UserController {
     // Body validation
     const response = await UserService.signUpUser(req.body);
 
+    res.cookie('username', response.data.username);
+    res.cookie('token', response.data.token);
     res.json(response);
   }
 
@@ -16,6 +18,7 @@ class UserController {
     // Body validation
     const response = await UserService.signInUser(req.body);
 
+    res.cookie('username', response.data.username);
     res.cookie('token', response.data.token);
     res.json(response);
   }
@@ -24,6 +27,7 @@ class UserController {
   async signOut(req: Request, res: Response) {
     const response = await UserService.signOutUser(req?.userId);
 
+    res.clearCookie('username');
     res.clearCookie('token');
     res.json(response);
   }

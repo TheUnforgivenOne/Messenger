@@ -4,6 +4,10 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 class UserService {
+  private generateJwt(userId: string) {
+    return jwt.sign({ userId }, process.env.JWT_SECRET);
+  }
+
   async signUpUser(userCreds: IUser) {
     // Check if username already taken
     const user = await UserRepository.getUserByUsername(userCreds.username);
@@ -18,7 +22,12 @@ class UserService {
       password: hashedPassword,
     });
 
-    return { message: `User ${newUser.username} created` };
+    const token = this.generateJwt(newUser._id.toString());
+
+    return {
+      message: `User ${newUser.username} created`,
+      data: { token, username: newUser.username },
+    };
   }
 
   async signInUser(loginCreds: ISignInParams) {
@@ -33,14 +42,9 @@ class UserService {
     );
     if (!passwordCorrect) throw new Error('Incorrect password');
 
-    // Generate jwt
-    const token = jwt.sign(
-      { userId: user._id.toString() },
-      process.env.JWT_SECRET,
-      { expiresIn: '6h' }
-    );
+    const token = this.generateJwt(user._id.toString());
 
-    return { message: 'Logged in', data: { token } };
+    return { message: 'Logged in', data: { token, username: user.username } };
   }
 
   async signOutUser(userId: string) {
