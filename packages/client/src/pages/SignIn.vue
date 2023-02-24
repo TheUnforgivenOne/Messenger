@@ -1,41 +1,68 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { ISignInParams, validateSignInParams } from 'monorepo-shared';
 import RequestBuilder from '../utils/RequestBuilder';
-import { ISignInParams } from 'monorepo-shared';
 import store from '../store';
 
-interface SignInState extends ISignInParams {
+interface SignInState {
   open: boolean;
+  signInParams: ISignInParams;
+  errors: any;
 }
+
+const initialSignInParams = {
+  username: '',
+  password: '',
+};
 
 export default defineComponent({
   data(): SignInState {
     return {
       open: false,
-      username: '',
-      password: '',
+      signInParams: { ...initialSignInParams },
+      errors: {},
     };
+  },
+
+  computed: {
+    isErrors() {
+      return !!Object.keys(this.errors).length;
+    },
   },
 
   methods: {
     toggleDialog(isOpen: boolean) {
-      this.username = '';
-      this.password = '';
+      this.signInParams = { ...initialSignInParams };
       this.open = isOpen;
     },
-    async onSignIn() {
-      const signInParams: ISignInParams = {
-        username: this.username,
-        password: this.password,
-      };
 
+    async onSignIn() {
       const response = await RequestBuilder.post({
         endpoint: '/api/user/signin',
-        body: signInParams,
+        body: this.signInParams,
       });
 
       store.methods.setToken(response.data?.token);
       this.toggleDialog(false);
+    },
+  },
+
+  watch: {
+    signInParams: {
+      deep: true,
+      handler(formValues) {
+        validateSignInParams({ ...formValues });
+
+        this.errors =
+          validateSignInParams?.errors?.reduce(
+            (errs: { [key: string]: string }, err) => {
+              const formField = err.instancePath.replace('/', '');
+              Object.assign(errs, { [formField]: err.message });
+              return errs;
+            },
+            {}
+          ) || {};
+      },
     },
   },
 });
@@ -50,17 +77,27 @@ export default defineComponent({
           <v-text-field
             label="Username"
             variant="outlined"
-            v-model="username"
-            required
+            v-model="signInParams.username"
+            :error-messages="errors.username"
+            class="mb-6"
           />
           <v-text-field
             label="Password"
             type="password"
             variant="outlined"
-            v-model="password"
-            required
+            v-model="signInParams.password"
+            :error-messages="errors.password"
+            class="mb-6"
           />
-          <v-btn type="submit" color="secondary" block> Sign In </v-btn>
+          <v-btn
+            type="submit"
+            size="large"
+            color="secondary"
+            block
+            :disabled="isErrors"
+          >
+            Sign In
+          </v-btn>
         </v-form>
       </v-container>
     </v-sheet>

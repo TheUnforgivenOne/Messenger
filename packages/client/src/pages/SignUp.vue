@@ -1,44 +1,69 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { IUser } from 'monorepo-shared';
+import { IUser, validateUser } from 'monorepo-shared';
 import RequestBuilder from '../utils/RequestBuilder';
 import store from '../store';
 
-interface SignUpState extends IUser {
+interface SignUpState {
   open: boolean;
+  user: IUser;
+  errors: { [key: string]: string };
 }
+
+const initalUserState: IUser = {
+  username: '',
+  email: '',
+  password: '',
+};
 
 export default defineComponent({
   data(): SignUpState {
     return {
       open: false,
-      username: '',
-      email: '',
-      password: '',
+      user: { ...initalUserState },
+      errors: {},
     };
+  },
+
+  computed: {
+    isErrors() {
+      return !!Object.keys(this.errors).length;
+    },
   },
 
   methods: {
     toggleDialog(isOpen: boolean) {
-      this.username = '';
-      this.email = '';
-      this.password = '';
+      this.user = { ...initalUserState };
       this.open = isOpen;
     },
-    async onSignUp() {
-      const userCreds: IUser = {
-        username: this.username,
-        email: this.email,
-        password: this.password,
-      };
 
+    async onSignUp() {
       const response = await RequestBuilder.post({
         endpoint: '/api/user/signup',
-        body: userCreds,
+        body: this.user,
       });
 
       store.methods.setToken(response.data?.token);
       this.toggleDialog(false);
+    },
+  },
+
+  watch: {
+    user: {
+      deep: true,
+      handler(formValues) {
+        validateUser({ ...formValues });
+
+        this.errors =
+          validateUser?.errors?.reduce(
+            (errs: { [key: string]: string }, err) => {
+              const formField = err.instancePath.replace('/', '');
+              Object.assign(errs, { [formField]: err.message });
+              return errs;
+            },
+            {}
+          ) || {};
+      },
     },
   },
 });
@@ -51,25 +76,37 @@ export default defineComponent({
       <v-container class="pa-10">
         <v-form @submit.prevent="onSignUp">
           <v-text-field
+            autofocus
             label="Username"
             variant="outlined"
-            v-model="username"
-            required
+            v-model="user.username"
+            :error-messages="errors.username"
+            class="mb-6"
           />
           <v-text-field
             label="Email"
             variant="outlined"
-            v-model="email"
-            required
+            v-model="user.email"
+            :error-messages="errors.email"
+            class="mb-6"
           />
           <v-text-field
             label="Password"
             type="password"
             variant="outlined"
-            v-model="password"
-            required
+            v-model="user.password"
+            :error-messages="errors.password"
+            class="mb-6"
           />
-          <v-btn type="submit" color="secondary" block> Sign Up </v-btn>
+          <v-btn
+            type="submit"
+            size="large"
+            color="secondary"
+            block
+            :disabled="isErrors"
+          >
+            Sign Up
+          </v-btn>
         </v-form>
       </v-container>
     </v-sheet>
