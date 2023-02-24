@@ -9,7 +9,7 @@ const verifyUser: RequestHandler = async (req, res, next) => {
   try {
     const decodedToken = jwt.verify(
       token,
-      process.env.JWT_SECRET
+      process.env.JWT_SECRET ?? 'easy_secret'
     ) as JwtPayload;
     // TODO: Check token expiration
 

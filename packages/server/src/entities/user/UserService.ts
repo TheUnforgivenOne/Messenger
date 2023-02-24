@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 
 class UserService {
   private generateJwt(userId: string) {
-    return jwt.sign({ userId }, process.env.JWT_SECRET);
+    return jwt.sign({ userId }, process.env.JWT_SECRET ?? 'easy_secret');
   }
 
   async signUpUser(userCreds: IUser) {

@@ -1,12 +1,15 @@
 import { Request, Response } from 'express';
 import UserService from './UserService';
 import catchErrors from '../../decorators/catchErrors';
+import { validateSignInParams, validateUser } from 'monorepo-shared';
 
 class UserController {
   @catchErrors
   async signUp(req: Request, res: Response) {
-    // Body validation
-    const response = await UserService.signUpUser(req.body);
+    const newUser = req.body;
+    validateUser(newUser);
+
+    const response = await UserService.signUpUser(newUser);
 
     res.cookie('token', response.data.token);
     res.json(response);
@@ -14,8 +17,10 @@ class UserController {
 
   @catchErrors
   async signIn(req: Request, res: Response) {
-    // Body validation
-    const response = await UserService.signInUser(req.body);
+    const signInParams = req.body;
+    validateSignInParams(signInParams);
+
+    const response = await UserService.signInUser(signInParams);
 
     res.cookie('token', response.data.token);
     res.json(response);

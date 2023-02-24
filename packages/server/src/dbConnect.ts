@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const connectToMongo = async () => {
-  const connectionString: string = process.env.DB_CONNECTION;
+  const connectionString: string = process.env.DB_CONNECTION || '';
 
   mongoose.set('strictQuery', false);
 
