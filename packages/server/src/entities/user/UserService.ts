@@ -1,5 +1,5 @@
 import { ISignInParams, IUser } from 'monorepo-shared';
-import UserRepository from '../../dataAccess/repositories/UserRepository';
+import UserRepository from '../../DataAccessLayer/repositories/UserRepository';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -16,7 +16,7 @@ class UserService {
     // Hash password
     const hashedPassword = await bcrypt.hash(userCreds.password, 5);
 
-    // CreateUser
+    // Create user
     const newUser = await UserRepository.createUser({
       ...userCreds,
       password: hashedPassword,
@@ -24,10 +24,7 @@ class UserService {
 
     const token = this.generateJwt(newUser._id.toString());
 
-    return {
-      message: `User ${newUser.username} created`,
-      data: { token, username: newUser.username },
-    };
+    return { message: `User ${newUser.username} created`, data: { token } };
   }
 
   async signInUser(loginCreds: ISignInParams) {
@@ -44,15 +41,7 @@ class UserService {
 
     const token = this.generateJwt(user._id.toString());
 
-    return { message: 'Logged in', data: { token, username: user.username } };
-  }
-
-  async signOutUser(userId: string) {
-    // Check if user exist
-    const user = UserRepository.getUserById(userId);
-    if (!user) throw new Error('Wrong user id');
-
-    return { message: 'Logged out' };
+    return { message: 'Logged in', data: { token } };
   }
 }
 

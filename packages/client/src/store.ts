@@ -1,22 +1,17 @@
 import { reactive } from 'vue';
 
-interface IUserStore {
-  username: string;
-  token: string;
+export interface IStore {
+  token?: string;
+  methods: any;
 }
 
-const defaultUser: IUserStore = {
-  username: '',
-  token: '',
-};
+const store = reactive<IStore>({
+  token: undefined,
 
-const store = reactive({
-  user: defaultUser,
-  setUser(user: IUserStore) {
-    this.user = user;
-  },
-  resetUser() {
-    this.user = defaultUser;
+  methods: {
+    setToken(newToken?: string) {
+      this.token = newToken;
+    },
   },
 });
 

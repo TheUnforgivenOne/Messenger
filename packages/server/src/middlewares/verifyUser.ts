@@ -1,7 +1,8 @@
 import { RequestHandler } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import UserRepository from '../DataAccessLayer/repositories/UserRepository';
 
-const verifyUser: RequestHandler = (req, res, next) => {
+const verifyUser: RequestHandler = async (req, res, next) => {
   const token = req.cookies?.token;
   if (!token) return res.status(401).json({ message: 'Not Autorized' });
 
@@ -12,7 +13,12 @@ const verifyUser: RequestHandler = (req, res, next) => {
     ) as JwtPayload;
     // TODO: Check token expiration
 
+    const user = await UserRepository.getUserById(decodedToken.userId);
+    if (!user) throw new Error('Token is not valid');
+
     req.userId = decodedToken.userId;
+    req.user = user;
+
     next();
   } catch (err) {
     throw new Error(err.message);

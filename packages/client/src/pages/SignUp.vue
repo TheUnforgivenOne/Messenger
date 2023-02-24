@@ -1,3 +1,49 @@
+<script lang="ts">
+import { defineComponent } from 'vue';
+import { IUser } from 'monorepo-shared';
+import RequestBuilder from '../utils/RequestBuilder';
+import store from '../store';
+
+interface SignUpState extends IUser {
+  open: boolean;
+}
+
+export default defineComponent({
+  data(): SignUpState {
+    return {
+      open: false,
+      username: '',
+      email: '',
+      password: '',
+    };
+  },
+
+  methods: {
+    toggleDialog(isOpen: boolean) {
+      this.username = '';
+      this.email = '';
+      this.password = '';
+      this.open = isOpen;
+    },
+    async onSignUp() {
+      const userCreds: IUser = {
+        username: this.username,
+        email: this.email,
+        password: this.password,
+      };
+
+      const response = await RequestBuilder.post({
+        endpoint: '/api/user/signup',
+        body: userCreds,
+      });
+
+      store.methods.setToken(response.data?.token);
+      this.toggleDialog(false);
+    },
+  },
+});
+</script>
+
 <template>
   <v-btn @click="toggleDialog(true)" color="secondary"> Sign Up </v-btn>
   <v-dialog v-model="open">
@@ -29,44 +75,3 @@
     </v-sheet>
   </v-dialog>
 </template>
-
-<script lang="ts">
-import { IUser } from 'monorepo-shared';
-import RequestBuilder from '../utils/RequestBuilder';
-import store from '../store';
-
-export default {
-  data() {
-    return {
-      open: false,
-      username: '',
-      email: '',
-      password: '',
-    };
-  },
-
-  methods: {
-    toggleDialog(isOpen: boolean) {
-      this.username = '';
-      this.email = '';
-      this.password = '';
-      this.open = isOpen;
-    },
-    async onSignUp() {
-      const userCreds: IUser = {
-        username: this.username,
-        email: this.email,
-        password: this.password,
-      };
-
-      const response = await RequestBuilder.post({
-        endpoint: '/api/user/signup',
-        body: userCreds,
-      });
-
-      store.setUser({ ...response.data });
-      this.toggleDialog(false);
-    },
-  },
-};
-</script>
