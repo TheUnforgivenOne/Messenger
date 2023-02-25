@@ -10,7 +10,7 @@ const store = reactive<IStore>({
 
   methods: {
     setToken(newToken?: string) {
-      this.token = newToken;
+      store.token = newToken;
     },
   },
 });

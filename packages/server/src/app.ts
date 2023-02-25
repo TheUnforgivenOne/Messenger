@@ -6,7 +6,6 @@ import errorsLogger from './middlewares/errorsLogger';
 import cookieParser from 'cookie-parser';
 
 import noEndpointHandler from './middlewares/noEndpointHandler';
-import verifyUser from './middlewares/verifyUser';
 
 const PORT = process.env.PORT || 5000;
 
@@ -16,9 +15,6 @@ const initalizeApp = () => {
   app.use(requestsLogger, json(), cookieParser());
 
   app.use('/user', UserRouter);
-  app.use('/', verifyUser, (req, res) => {
-    res.json({ message: 'hello there' });
-  });
   app.use(noEndpointHandler);
 
   app.use(errorsLogger);

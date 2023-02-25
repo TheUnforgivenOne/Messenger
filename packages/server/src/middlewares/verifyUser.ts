@@ -4,7 +4,8 @@ import UserRepository from '../DataAccessLayer/repositories/UserRepository';
 
 const verifyUser: RequestHandler = async (req, res, next) => {
   const token = req.cookies?.token;
-  if (!token) return res.status(401).json({ message: 'Not Autorized' });
+  if (!token)
+    return res.status(401).json({ error: true, message: 'Not Autorized' });
 
   try {
     const decodedToken = jwt.verify(

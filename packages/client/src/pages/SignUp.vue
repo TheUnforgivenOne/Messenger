@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { IUser, validateUser } from 'monorepo-shared';
+import { useToast } from 'vue-toastification';
 import RequestBuilder from '../utils/RequestBuilder';
 import store from '../store';
 
@@ -17,6 +18,11 @@ const initalUserState: IUser = {
 };
 
 export default defineComponent({
+  setup() {
+    const toast = useToast();
+    return { toast };
+  },
+
   data(): SignUpState {
     return {
       open: false,
@@ -39,12 +45,18 @@ export default defineComponent({
 
     async onSignUp() {
       const response = await RequestBuilder.post({
-        endpoint: '/api/user/signup',
+        endpoint: '/user/signup',
         body: this.user,
       });
 
-      store.methods.setToken(response.data?.token);
-      this.toggleDialog(false);
+      if (response?.error) {
+        this.toast.error(response.message);
+      } else {
+        store.methods.setToken(response.data?.token);
+
+        this.toast.success(response.message);
+        this.toggleDialog(false);
+      }
     },
   },
 

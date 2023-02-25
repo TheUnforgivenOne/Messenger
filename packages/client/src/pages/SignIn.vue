@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { ISignInParams, validateSignInParams } from 'monorepo-shared';
+import { useToast } from 'vue-toastification';
 import RequestBuilder from '../utils/RequestBuilder';
 import store from '../store';
 
@@ -16,6 +17,12 @@ const initialSignInParams = {
 };
 
 export default defineComponent({
+  setup() {
+    const toast = useToast();
+
+    return { toast };
+  },
+
   data(): SignInState {
     return {
       open: false,
@@ -38,12 +45,18 @@ export default defineComponent({
 
     async onSignIn() {
       const response = await RequestBuilder.post({
-        endpoint: '/api/user/signin',
+        endpoint: '/user/signin',
         body: this.signInParams,
       });
 
-      store.methods.setToken(response.data?.token);
-      this.toggleDialog(false);
+      if (response?.error) {
+        this.toast.error(response.message);
+      } else {
+        store.methods.setToken(response.data?.token);
+
+        this.toast.success(response.message);
+        this.toggleDialog(false);
+      }
     },
   },
 

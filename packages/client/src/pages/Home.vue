@@ -23,29 +23,24 @@ export default defineComponent({
   },
 
   methods: {
-    async fetchData() {
-      const response = await RequestBuilder.get({ endpoint: '/api' });
-      this.response = response;
-    },
     async onSignOut() {
-      await RequestBuilder.post({ endpoint: '/api/user/signout' });
+      await RequestBuilder.post({ endpoint: '/user/signout' });
       store.methods.setToken();
     },
     async getMyInfo() {
-      const response = await RequestBuilder.get({ endpoint: '/api/user' });
+      const response = await RequestBuilder.get({ endpoint: '/user/myinfo' });
       this.user = response.data || null;
-    }
+    },
   },
 
   mounted() {
     const cookie = parseCookie(document.cookie);
     store.methods.setToken(cookie?.token);
-    this.fetchData();
+    this.getMyInfo();
   },
 
   watch: {
     'store.token'() {
-      this.fetchData();
       store.token && this.getMyInfo();
     },
   },
@@ -53,11 +48,10 @@ export default defineComponent({
 </script>
 
 <template>
-  <h1>Home</h1>
   <sign-in />
   <sign-up />
   <v-sheet v-show="store.token">
-    Hello, {{ user }}
+    User info: {{ user }}
     <v-btn @click="onSignOut" color="brown-darken-2">Sign Out</v-btn>
   </v-sheet>
   {{ response }}
