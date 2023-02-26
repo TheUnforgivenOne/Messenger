@@ -1,32 +1,32 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { IUser, validateUser } from 'monorepo-shared';
+import { ISignInParams, validateSignInParams } from 'monorepo-shared';
 import { useToast } from 'vue-toastification';
-import RequestBuilder from '../utils/RequestBuilder';
-import store from '../store';
+import RequestBuilder from '../../utils/RequestBuilder';
+import store from '../../store';
 
-interface SignUpState {
+interface SignInState {
   open: boolean;
-  user: IUser;
-  errors: { [key: string]: string };
+  signInParams: ISignInParams;
+  errors: any;
 }
 
-const initalUserState: IUser = {
+const initialSignInParams = {
   username: '',
-  email: '',
   password: '',
 };
 
 export default defineComponent({
   setup() {
     const toast = useToast();
+
     return { toast };
   },
 
-  data(): SignUpState {
+  data(): SignInState {
     return {
       open: false,
-      user: { ...initalUserState },
+      signInParams: { ...initialSignInParams },
       errors: {},
     };
   },
@@ -39,14 +39,14 @@ export default defineComponent({
 
   methods: {
     toggleDialog(isOpen: boolean) {
-      this.user = { ...initalUserState };
+      this.signInParams = { ...initialSignInParams };
       this.open = isOpen;
     },
 
-    async onSignUp() {
+    async onSignIn() {
       const response = await RequestBuilder.post({
-        endpoint: '/user/signup',
-        body: this.user,
+        endpoint: '/user/signin',
+        body: this.signInParams,
       });
 
       if (response?.error) {
@@ -61,13 +61,13 @@ export default defineComponent({
   },
 
   watch: {
-    user: {
+    signInParams: {
       deep: true,
       handler(formValues) {
-        validateUser({ ...formValues });
+        validateSignInParams({ ...formValues });
 
         this.errors =
-          validateUser?.errors?.reduce(
+          validateSignInParams?.errors?.reduce(
             (errs: { [key: string]: string }, err) => {
               const formField = err.instancePath.replace('/', '');
               Object.assign(errs, { [formField]: err.message });
@@ -82,43 +82,37 @@ export default defineComponent({
 </script>
 
 <template>
-  <v-btn @click="toggleDialog(true)" color="secondary"> Sign Up </v-btn>
+  <v-btn @click="toggleDialog(true)" color="primary"> Sign In </v-btn>
   <v-dialog v-model="open">
     <v-sheet class="w-50 mx-auto">
       <v-container class="pa-10">
-        <v-form @submit.prevent="onSignUp">
+        <v-form @submit.prevent="onSignIn">
           <v-text-field
-            autofocus
             label="Username"
             variant="outlined"
-            v-model="user.username"
+            v-model="signInParams.username"
             :error-messages="errors.username"
-            class="mb-6"
-          />
-          <v-text-field
-            label="Email"
-            variant="outlined"
-            v-model="user.email"
-            :error-messages="errors.email"
             class="mb-6"
           />
           <v-text-field
             label="Password"
             type="password"
             variant="outlined"
-            v-model="user.password"
+            v-model="signInParams.password"
             :error-messages="errors.password"
             class="mb-6"
           />
-          <v-btn
-            type="submit"
-            size="large"
-            color="secondary"
-            block
-            :disabled="isErrors"
-          >
-            Sign Up
-          </v-btn>
+          <v-sheet class="d-flex justify-space-between">
+            <v-btn
+              type="submit"
+              size="large"
+              color="primary"
+              :disabled="isErrors"
+            >
+              Sign In
+            </v-btn>
+            <v-btn size="large" @click="open = !open"> Cancel </v-btn>
+          </v-sheet>
         </v-form>
       </v-container>
     </v-sheet>
