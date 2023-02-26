@@ -1,7 +1,17 @@
 import { IUser } from 'monorepo-shared';
 import User from '../models/User';
 
+export type UserQueryParamsType = Partial<Omit<IUser, 'password'>>;
+
 class UserRepository {
+  // Find by query ignoring case
+  private getFilterQuery(params: UserQueryParamsType) {
+    return Object.keys(params).reduce((ps: any, p: string) => {
+      Object.assign(ps, { [p]: { $regex: params[p], $options: 'i' } });
+      return ps;
+    }, {});
+  }
+
   async createUser(user: IUser) {
     const newUser = await User.create(user);
 
@@ -14,16 +24,16 @@ class UserRepository {
     return user;
   }
 
-  async getUserByUsername(username: string) {
-    const user = await User.findOne({ username });
+  async getUser(queryParams: UserQueryParamsType) {
+    const filterQuery = this.getFilterQuery(queryParams);
+    const user = await User.findOne(filterQuery);
 
     return user;
   }
 
-  async getUsers(substring: string) {
-    const users = await User.find({
-      username: { $regex: substring, $options: 'i' },
-    });
+  async getUsers(queryParams: UserQueryParamsType) {
+    const filterQuery = this.getFilterQuery(queryParams);
+    const users = await User.find(filterQuery);
 
     return users;
   }

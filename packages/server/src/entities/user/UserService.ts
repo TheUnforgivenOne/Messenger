@@ -1,5 +1,7 @@
 import { ISignInParams, IUser } from 'monorepo-shared';
-import UserRepository from '../../DataAccessLayer/repositories/UserRepository';
+import UserRepository, {
+  UserQueryParamsType,
+} from '../../DataAccessLayer/repositories/UserRepository';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -10,7 +12,7 @@ class UserService {
 
   async signUpUser(userCreds: IUser) {
     // Check if username already taken
-    const user = await UserRepository.getUserByUsername(userCreds.username);
+    const user = await UserRepository.getUser({ username: userCreds.username });
     if (user) throw new Error('This username is already taken');
 
     // Hash password
@@ -29,7 +31,9 @@ class UserService {
 
   async signInUser(loginCreds: ISignInParams) {
     // Check if user exist
-    const user = await UserRepository.getUserByUsername(loginCreds.username);
+    const user = await UserRepository.getUser({
+      username: loginCreds.username,
+    });
     if (!user) throw new Error('Incorrect username');
 
     // Check password
@@ -44,11 +48,14 @@ class UserService {
     return { message: 'Logged in', data: { token } };
   }
 
-  async getUsers(query: { search?: string }) {
-    if (!query.search) return { data: { users: [] } };
-    const users = await UserRepository.getUsers(query.search);
+  async getUsers(query: UserQueryParamsType) {
+    const users = await UserRepository.getUsers(query);
+    const usersResponse = users.map(({ username, email }) => ({
+      username,
+      email,
+    }));
 
-    return { data: { users } };
+    return { data: { users: usersResponse } };
   }
 }
 

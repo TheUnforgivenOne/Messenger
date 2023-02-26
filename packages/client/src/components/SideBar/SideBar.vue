@@ -4,7 +4,7 @@ import { defineComponent } from 'vue';
 import RequestBuilder from '../../utils/RequestBuilder';
 
 interface SideBarState {
-  search: string | null;
+  username: string | null;
   users: IUser[];
   _timerId: NodeJS.Timeout | null;
 }
@@ -12,7 +12,7 @@ interface SideBarState {
 export default defineComponent({
   data(): SideBarState {
     return {
-      search: null,
+      username: null,
       users: [],
       _timerId: null,
     };
@@ -24,7 +24,7 @@ export default defineComponent({
       this._timerId = setTimeout(async () => {
         const response = await RequestBuilder.get({
           endpoint: '/user',
-          query: { search: newSearch ?? '' },
+          query: { username: newSearch ?? '' },
         });
         this.users = response?.data?.users || [];
       }, 500);
@@ -32,8 +32,13 @@ export default defineComponent({
   },
 
   watch: {
-    search(newSearch) {
-      this.fetchUsers(newSearch);
+    username(newSearch) {
+      if (newSearch) {
+        this.fetchUsers(newSearch);
+      } else {
+        this._timerId && clearTimeout(this._timerId);
+        this.users = [];
+      }
     },
   },
 });
@@ -43,13 +48,13 @@ export default defineComponent({
   <v-navigation-drawer permanent absolute>
     <v-container>
       <v-text-field
-        v-model="search"
+        v-model="username"
         variant="underlined"
         placeholder="Search for user"
         clearable
       />
     </v-container>
-    <div v-if="search && users.length">
+    <div v-if="username && users.length">
       <v-list>
         <v-list-item v-for="user in users">
           {{ user.username }}

@@ -1,11 +1,14 @@
 import { RequestHandler } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import UserRepository from '../DataAccessLayer/repositories/UserRepository';
+import createResponse from '../utils/createResponse';
 
 const verifyUser: RequestHandler = async (req, res, next) => {
   const token = req?.cookies?.token;
   if (!token)
-    return res.status(401).json({ error: true, message: 'Not Autorized' });
+    return res
+      .status(401)
+      .json(createResponse({ error: true, message: 'Not Autorized' }));
 
   try {
     const decodedToken = jwt.verify(
