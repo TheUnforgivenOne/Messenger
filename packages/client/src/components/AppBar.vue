@@ -55,11 +55,11 @@ export default defineComponent({
 </script>
 
 <template>
-  <v-app-bar absolute>
+  <v-app-bar absolute color="blue-grey-lighten-4">
     <v-app-bar-title>Messenger</v-app-bar-title>
 
     <template v-slot:append class="mr-4">
-      <v-sheet v-show="user">
+      <div v-show="user">
         <span class="ext-subtitle-1 mr-2">Hello, {{ user?.username }}</span>
 
         <v-menu location="bottom">
@@ -70,12 +70,12 @@ export default defineComponent({
             <v-list-item @click="onSignOut">Sign Out</v-list-item>
           </v-list>
         </v-menu>
-      </v-sheet>
+      </div>
 
-      <v-sheet v-show="!store.token">
+      <div v-show="!store.token">
         <sign-in />
         <sign-up />
-      </v-sheet>
+      </div>
     </template>
   </v-app-bar>
 </template>
