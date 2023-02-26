@@ -19,6 +19,14 @@ class UserRepository {
 
     return user;
   }
+
+  async getUsers(substring: string) {
+    const users = await User.find({
+      username: { $regex: substring, $options: 'i' },
+    });
+
+    return users;
+  }
 }
 
 export default new UserRepository();

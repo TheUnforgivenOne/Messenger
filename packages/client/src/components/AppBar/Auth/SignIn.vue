@@ -2,8 +2,8 @@
 import { defineComponent } from 'vue';
 import { ISignInParams, validateSignInParams } from 'monorepo-shared';
 import { useToast } from 'vue-toastification';
-import RequestBuilder from '../../utils/RequestBuilder';
-import store from '../../store';
+import RequestBuilder from '../../../utils/RequestBuilder';
+import store from '../../../store';
 
 interface SignInState {
   open: boolean;

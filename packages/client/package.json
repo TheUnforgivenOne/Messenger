@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mdi/font": "^7.1.96",
     "monorepo-shared": "0.0.1",
     "vue": "^3.2.45",
     "vue-router": "^4.1.6",

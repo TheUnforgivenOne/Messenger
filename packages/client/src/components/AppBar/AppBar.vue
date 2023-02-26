@@ -1,13 +1,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { IUser } from 'monorepo-shared';
-import store, { IStore } from '../store';
+import store, { IStore } from '../../store';
 
 import SignIn from './Auth/SignIn.vue';
 import SignUp from './Auth/SignUp.vue';
 
-import RequestBuilder from '../utils/RequestBuilder';
-import parseCookie from '../utils/parseCookie';
+import RequestBuilder from '../../utils/RequestBuilder';
+import parseCookie from '../../utils/parseCookie';
 
 interface AppBarState {
   store: IStore;
@@ -29,8 +29,8 @@ export default defineComponent({
 
   methods: {
     async getMyInfo() {
-      const response = await RequestBuilder.get({ endpoint: '/user/myinfo' });
-      this.user = response.data || null;
+      const response = await RequestBuilder.get({ endpoint: '/user' });
+      this.user = response.data.users[0] || null;
     },
 
     async onSignOut() {

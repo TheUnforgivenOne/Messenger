@@ -43,6 +43,13 @@ class UserService {
 
     return { message: 'Logged in', data: { token } };
   }
+
+  async getUsers(query: { search?: string }) {
+    if (!query.search) return { data: { users: [] } };
+    const users = await UserRepository.getUsers(query.search);
+
+    return { data: { users } };
+  }
 }
 
 export default new UserService();

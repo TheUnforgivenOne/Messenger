@@ -1089,6 +1089,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mdi/font@npm:^7.1.96":
+  version: 7.1.96
+  resolution: "@mdi/font@npm:7.1.96"
+  checksum: db6dce72f553e844d049cc563cf89ae58dfd0f55f99f743ccbf1ca6ab644c940f50fbd78ecd91290a67ebb58fa5bae4983bbab782a6611456bd87566825c1ca4
+  languageName: node
+  linkType: hard
+
 "@npmcli/fs@npm:^2.1.0":
   version: 2.1.2
   resolution: "@npmcli/fs@npm:2.1.2"
@@ -2882,6 +2889,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "monorepo-client@workspace:packages/client"
   dependencies:
+    "@mdi/font": ^7.1.96
     "@vitejs/plugin-vue": ^4.0.0
     monorepo-shared: 0.0.1
     typescript: ^4.9.3
