@@ -10,6 +10,7 @@ export interface ISignInParams {
 }
 
 export interface IUser extends ISignInParams {
+  _id: string;
   email: string;
 }
 
@@ -19,6 +20,11 @@ export interface IMessage {
   viewed: boolean;
   message: string;
   user: IUser;
+}
+
+export interface ICreateChat {
+  title: string;
+  users: string[];
 }
 
 export interface IChat {

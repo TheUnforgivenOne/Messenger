@@ -20,7 +20,7 @@ const verifyUser: RequestHandler = async (req, res, next) => {
     const user = await UserRepository.getUserById(decodedToken.userId);
     if (!user) throw new Error('Token is not valid');
 
-    req.userId = decodedToken.userId;
+    req.userId = decodedToken.userId!;
     req.user = user;
 
     next();

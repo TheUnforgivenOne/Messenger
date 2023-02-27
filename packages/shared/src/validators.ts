@@ -5,7 +5,7 @@ import { IUser, ISignInParams } from './interfaces';
 const ajv = new Ajv({ allErrors: true });
 addFormats(ajv);
 
-const userSchema: JSONSchemaType<IUser> = {
+const userSchema: JSONSchemaType<Omit<IUser, '_id'>> = {
   type: 'object',
   properties: {
     username: { type: 'string', minLength: 4 },

@@ -50,12 +50,8 @@ class UserService {
 
   async getUsers(query: UserQueryParamsType) {
     const users = await UserRepository.getUsers(query);
-    const usersResponse = users.map(({ username, email }) => ({
-      username,
-      email,
-    }));
 
-    return { data: { users: usersResponse } };
+    return { data: { users } };
   }
 }
 

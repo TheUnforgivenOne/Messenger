@@ -1,11 +1,12 @@
 <script lang="ts">
-import { IUser } from 'monorepo-shared';
+import { IChat, IUser } from 'monorepo-shared';
 import { defineComponent } from 'vue';
 import RequestBuilder from '../../utils/RequestBuilder';
 
 interface SideBarState {
   username: string | null;
   users: IUser[];
+  chats: IChat[];
   _timerId: NodeJS.Timeout | null;
 }
 
@@ -14,6 +15,7 @@ export default defineComponent({
     return {
       username: null,
       users: [],
+      chats: [],
       _timerId: null,
     };
   },
@@ -29,6 +31,20 @@ export default defineComponent({
         this.users = response?.data?.users || [];
       }, 500);
     },
+    async createChat(user: IUser) {
+      await RequestBuilder.post({
+        endpoint: '/chat/new',
+        body: { title: 'chat', users: [user._id] },
+      });
+
+      this.fetchChats();
+    },
+    async fetchChats() {
+      const response = await RequestBuilder.get({ endpoint: '/chat' });
+
+      console.log(response.data.chats);
+      this.chats = response.data.chats;
+    },
   },
 
   watch: {
@@ -40,6 +56,10 @@ export default defineComponent({
         this.users = [];
       }
     },
+  },
+
+  mounted() {
+    this.fetchChats();
   },
 });
 </script>
@@ -56,8 +76,18 @@ export default defineComponent({
     </v-container>
     <div v-if="username && users.length">
       <v-list>
-        <v-list-item v-for="user in users">
+        <v-list-item v-for="user in users" @click="createChat(user)">
           {{ user.username }}
+        </v-list-item>
+      </v-list>
+    </div>
+    <div>
+      <v-list>
+        <v-list-item v-for="chat in chats">
+          Title: {{ chat.title }}
+          <div v-for="user in chat.users">
+            {{ user.username }}
+          </div>
         </v-list-item>
       </v-list>
     </div>

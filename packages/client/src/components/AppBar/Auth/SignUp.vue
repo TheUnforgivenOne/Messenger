@@ -7,11 +7,11 @@ import store from '../../../store';
 
 interface SignUpState {
   open: boolean;
-  user: IUser;
+  user: Omit<IUser, '_id'>;
   errors: { [key: string]: string };
 }
 
-const initalUserState: IUser = {
+const initalUserState: Omit<IUser, '_id'> = {
   username: '',
   email: '',
   password: '',

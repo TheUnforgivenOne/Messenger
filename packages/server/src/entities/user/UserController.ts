@@ -36,10 +36,12 @@ class UserController {
   @catchErrors
   async getUsers(req: Request, res: Response) {
     const query = req.query;
-    const { username, email } = req.user;
+    const user = req.user;
 
     // If no query provided, return self user
-    let response = { data: { users: [{ username, email }] } };
+    let response = {
+      data: { users: [{ username: user?.username, email: user?.email }] },
+    };
 
     if (Object.keys(query).length) {
       response = await UserService.getUsers(query);
