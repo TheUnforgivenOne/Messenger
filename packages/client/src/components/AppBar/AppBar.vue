@@ -29,8 +29,8 @@ export default defineComponent({
 
   methods: {
     async getMyInfo() {
-      const response = await RequestBuilder.get({ endpoint: '/user' });
-      this.user = response.data.users[0] || null;
+      const response = await RequestBuilder.get({ endpoint: '/user/me' });
+      this.user = response.data.user || null;
     },
 
     async onSignOut() {
@@ -43,7 +43,6 @@ export default defineComponent({
   mounted() {
     const cookie = parseCookie(document.cookie);
     store.methods.setToken(cookie?.token);
-    this.getMyInfo();
   },
 
   watch: {
@@ -64,7 +63,11 @@ export default defineComponent({
 
         <v-menu location="bottom">
           <template v-slot:activator="{ props }">
-            <v-avatar color="surface-variant" v-bind="props" style="cursor: pointer;" />
+            <v-avatar
+              color="surface-variant"
+              v-bind="props"
+              style="cursor: pointer"
+            />
           </template>
           <v-list>
             <v-list-item @click="onSignOut">Sign Out</v-list-item>

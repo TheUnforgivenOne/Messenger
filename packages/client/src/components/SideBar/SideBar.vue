@@ -42,7 +42,6 @@ export default defineComponent({
     async fetchChats() {
       const response = await RequestBuilder.get({ endpoint: '/chat' });
 
-      console.log(response.data.chats);
       this.chats = response.data.chats;
     },
   },
