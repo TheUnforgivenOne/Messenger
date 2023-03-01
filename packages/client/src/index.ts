@@ -5,7 +5,7 @@ import { createVuetify } from 'vuetify';
 import { aliases, mdi } from 'vuetify/iconsets/mdi';
 import Toast from 'vue-toastification';
 
-import '@mdi/font/css/materialdesignicons.css'
+import '@mdi/font/css/materialdesignicons.css';
 import 'vue-toastification/dist/index.css';
 import 'vuetify/styles';
 

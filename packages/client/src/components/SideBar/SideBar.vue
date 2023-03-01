@@ -2,18 +2,27 @@
 import { IChat, IUser } from 'monorepo-shared';
 import { defineComponent } from 'vue';
 import RequestBuilder from '../../utils/RequestBuilder';
+import UsersList from '../UserList/UsersList.vue';
+import ChatsList from '../ChatsList/ChatsList.vue';
 
 interface SideBarState {
-  username: string | null;
+  search: string | null;
+  searching: boolean;
   users: IUser[];
   chats: IChat[];
   _timerId: NodeJS.Timeout | null;
 }
 
 export default defineComponent({
+  components: {
+    UsersList,
+    ChatsList,
+  },
+
   data(): SideBarState {
     return {
-      username: null,
+      search: null,
+      searching: false,
       users: [],
       chats: [],
       _timerId: null,
@@ -22,23 +31,19 @@ export default defineComponent({
 
   methods: {
     fetchUsers(newSearch: string | null) {
+      this.searching = true;
       this._timerId && clearTimeout(this._timerId);
       this._timerId = setTimeout(async () => {
         const response = await RequestBuilder.get({
           endpoint: '/user',
           query: { username: newSearch ?? '' },
         });
+
         this.users = response?.data?.users || [];
+        this.searching = false;
       }, 500);
     },
-    async createChat(user: IUser) {
-      await RequestBuilder.post({
-        endpoint: '/chat/new',
-        body: { users: [user._id] },
-      });
 
-      this.fetchChats();
-    },
     async fetchChats() {
       const response = await RequestBuilder.get({ endpoint: '/chat' });
 
@@ -47,11 +52,12 @@ export default defineComponent({
   },
 
   watch: {
-    username(newSearch) {
+    search(newSearch) {
       if (newSearch) {
         this.fetchUsers(newSearch);
       } else {
         this._timerId && clearTimeout(this._timerId);
+        this.searching = false;
         this.users = [];
       }
     },
@@ -65,28 +71,23 @@ export default defineComponent({
 
 <template>
   <v-navigation-drawer permanent absolute>
-    <v-container>
+    <v-container class="py-0 text-center">
       <v-text-field
-        v-model="username"
+        v-model="search"
         variant="underlined"
         placeholder="Search for user"
         clearable
       />
+      <v-progress-circular indeterminate v-show="searching" />
     </v-container>
-    <div v-if="username && users.length">
-      <v-list>
-        <v-list-item v-for="user in users" @click="createChat(user)">
-          {{ user.username }}
-        </v-list-item>
-      </v-list>
-    </div>
-    <div>
-      <v-list>
-        <v-list-item v-for="chat in chats" style="cursor: pointer" class="d-flex">
-          <v-avatar color="surface-variant" />
-          <span>{{ chat.title }} {{ chat.users[0].username }}</span>
-        </v-list-item>
-      </v-list>
-    </div>
+
+    <users-list
+      :users="users"
+      :searching="searching"
+      :fetch-chats="fetchChats"
+      v-if="search"
+    />
+
+    <chats-list :chats="chats" v-else />
   </v-navigation-drawer>
 </template>

@@ -1,0 +1,42 @@
+<script lang="ts">
+import { defineComponent, PropType } from 'vue';
+import { IChat } from 'monorepo-shared';
+
+export default defineComponent({
+  props: {
+    chats: { type: Array as PropType<IChat[]>, required: true },
+  },
+});
+</script>
+
+<template>
+  <v-list>
+    <v-list-item
+      v-for="(chat, i) in chats"
+      :key="i"
+      border
+      rounded="pill"
+      class="chat-item px-2"
+    >
+      <template v-slot:prepend>
+        <v-avatar color="surface-variant" />
+      </template>
+
+      <v-list-item-title>
+        {{ chat.title }} {{ chat.users[0].username }}
+      </v-list-item-title>
+
+      <v-list-item-subtitle> Message </v-list-item-subtitle>
+    </v-list-item>
+  </v-list>
+</template>
+
+<style scoped>
+.chat-item {
+  cursor: pointer;
+  margin: 1rem 0.5rem;
+}
+.chat-item:hover {
+  background-color: #e1f5fe;
+}
+</style>
