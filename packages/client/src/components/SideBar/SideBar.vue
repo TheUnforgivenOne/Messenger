@@ -34,7 +34,7 @@ export default defineComponent({
     async createChat(user: IUser) {
       await RequestBuilder.post({
         endpoint: '/chat/new',
-        body: { title: 'chat', users: [user._id] },
+        body: { users: [user._id] },
       });
 
       this.fetchChats();
@@ -82,11 +82,9 @@ export default defineComponent({
     </div>
     <div>
       <v-list>
-        <v-list-item v-for="chat in chats">
-          Title: {{ chat.title }}
-          <div v-for="user in chat.users">
-            {{ user.username }}
-          </div>
+        <v-list-item v-for="chat in chats" style="cursor: pointer" class="d-flex">
+          <v-avatar color="surface-variant" />
+          <span>{{ chat.title }} {{ chat.users[0].username }}</span>
         </v-list-item>
       </v-list>
     </div>

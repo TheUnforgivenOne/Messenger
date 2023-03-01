@@ -4,7 +4,7 @@ import ChatRepository from '../../DataAccessLayer/repositories/ChatRepository';
 class ChatService {
   async createChat(userId: string, params: ICreateChat) {
     const newChatParams: ICreateChat = {
-      ...params,
+      title: 'Chat',
       users: [...params.users, userId],
     };
     const newChat = await ChatRepository.createChat(newChatParams);
