@@ -14,8 +14,7 @@ export default defineComponent({
     <v-list-item
       v-for="(chat, i) in chats"
       :key="i"
-      border
-      rounded="pill"
+      rounded="sm"
       class="chat-item px-2"
     >
       <template v-slot:prepend>
@@ -34,7 +33,8 @@ export default defineComponent({
 <style scoped>
 .chat-item {
   cursor: pointer;
-  margin: 1rem 0.5rem;
+  margin: 0.5rem 0;
+  padding: 0.5rem 1rem;
 }
 .chat-item:hover {
   background-color: #e1f5fe;

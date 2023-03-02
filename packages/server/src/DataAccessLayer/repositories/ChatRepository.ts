@@ -1,8 +1,8 @@
-import { ICreateChat } from 'monorepo-shared';
+import { IChatCreate } from 'monorepo-shared';
 import Chat from '../models/Chat';
 
 class ChatRepository {
-  async createChat(params: ICreateChat) {
+  async createChat(params: IChatCreate) {
     const newChat = await Chat.create(params);
 
     return newChat;

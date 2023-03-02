@@ -1,4 +1,4 @@
-import mongoose, { Schema, Types } from 'mongoose';
+import { Schema, Types, model } from 'mongoose';
 import { IChat } from 'monorepo-shared';
 
 const ChatSchema = new Schema<IChat>({
@@ -19,4 +19,4 @@ const ChatSchema = new Schema<IChat>({
   },
 });
 
-export default mongoose.model('Chat', ChatSchema);
+export default model('Chat', ChatSchema);

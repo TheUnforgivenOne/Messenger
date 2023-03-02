@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import { IUser } from 'monorepo-shared';
 
 const UserSchema = new Schema<IUser>({
@@ -7,4 +7,4 @@ const UserSchema = new Schema<IUser>({
   password: { type: String, required: true },
 });
 
-export default mongoose.model('User', UserSchema);
+export default model('User', UserSchema);

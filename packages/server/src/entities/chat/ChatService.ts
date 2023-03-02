@@ -1,9 +1,9 @@
-import { ICreateChat } from 'monorepo-shared';
+import { IChatCreate } from 'monorepo-shared';
 import ChatRepository from '../../DataAccessLayer/repositories/ChatRepository';
 
 class ChatService {
-  async createChat(userId: string, params: ICreateChat) {
-    const newChatParams: ICreateChat = {
+  async createChat(userId: string, params: IChatCreate) {
+    const newChatParams: IChatCreate = {
       title: 'Chat',
       users: [...params.users, userId],
     };

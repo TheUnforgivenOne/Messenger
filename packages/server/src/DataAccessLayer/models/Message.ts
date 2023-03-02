@@ -1,4 +1,4 @@
-import mongoose, { Schema, Types } from 'mongoose';
+import { Schema, Types, model } from 'mongoose';
 import { IMessage } from 'monorepo-shared';
 
 const MessageSchema = new Schema<IMessage>({
@@ -9,4 +9,4 @@ const MessageSchema = new Schema<IMessage>({
   user: { type: Types.ObjectId, required: true, ref: 'User' },
 });
 
-export default mongoose.model('Message', MessageSchema);
+export default model('Message', MessageSchema);

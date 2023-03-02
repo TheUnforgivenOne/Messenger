@@ -1,17 +1,17 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { IUser, validateUser } from 'monorepo-shared';
+import { IUserCreate, validateUser } from 'monorepo-shared';
 import { useToast } from 'vue-toastification';
 import RequestBuilder from '../../../utils/RequestBuilder';
 import store from '../../../store';
 
 interface SignUpState {
   open: boolean;
-  user: Omit<IUser, '_id'>;
+  user: IUserCreate;
   errors: { [key: string]: string };
 }
 
-const initalUserState: Omit<IUser, '_id'> = {
+const initalUserState: IUserCreate = {
   username: '',
   email: '',
   password: '',

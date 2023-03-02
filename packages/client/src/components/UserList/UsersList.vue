@@ -47,7 +47,8 @@ export default defineComponent({
 <style scoped>
 .user-item {
   cursor: pointer;
-  margin: 1rem 0.5rem;
+  margin: 0.5rem 0;
+  padding: 0.5rem 1rem;
 }
 .user-item:hover {
   background-color: #e1f5fe;

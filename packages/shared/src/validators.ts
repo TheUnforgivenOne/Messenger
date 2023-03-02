@@ -1,11 +1,11 @@
 import Ajv, { JSONSchemaType } from 'ajv';
 import addFormats from 'ajv-formats';
-import { IUser, ISignInParams } from './interfaces';
+import { ISignInParams, IUserCreate } from './interfaces';
 
 const ajv = new Ajv({ allErrors: true });
 addFormats(ajv);
 
-const userSchema: JSONSchemaType<Omit<IUser, '_id'>> = {
+const userSchema: JSONSchemaType<IUserCreate> = {
   type: 'object',
   properties: {
     username: { type: 'string', minLength: 4 },
