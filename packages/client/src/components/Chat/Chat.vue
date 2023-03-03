@@ -6,6 +6,8 @@ import RequestBuilder from '../../utils/RequestBuilder';
 interface ChatState {
   chat?: IChat;
   message: string;
+  from?: Date;
+  ws?: WebSocket;
 }
 
 export default defineComponent({
@@ -17,6 +19,8 @@ export default defineComponent({
     return {
       chat: undefined,
       message: '',
+      from: undefined,
+      ws: undefined,
     };
   },
 
@@ -35,8 +39,11 @@ export default defineComponent({
         body: { message: this.message, chat: this.chat?._id },
       });
 
+      // this.fetchChat(this.chatId);
+      // this.ws?.send(
+      //   JSON.stringify({ message: this.message, chat: this.chatId })
+      // );
       this.message = '';
-      this.fetchChat(this.chatId);
     },
   },
 
@@ -52,6 +59,24 @@ export default defineComponent({
 
   mounted() {
     this.fetchChat(this.chatId);
+    this.ws = new WebSocket('ws://localhost:5005/ws');
+
+    this.ws.onopen = (e) => {
+      console.log(e);
+    };
+
+    this.ws.onmessage = (e) => {
+      this.chat?.messages?.push(...JSON.parse(e.data));
+    };
+
+    setInterval(() => {
+      this.ws?.send(JSON.stringify({ chatId: this.chatId, from: this.from }));
+      this.from = new Date();
+    }, 1000);
+  },
+
+  onBeforeUnmount() {
+    this.ws?.close();
   },
 });
 </script>

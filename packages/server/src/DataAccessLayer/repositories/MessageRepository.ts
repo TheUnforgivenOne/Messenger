@@ -9,6 +9,15 @@ class MessageRepository {
 
     return newMessage;
   }
+
+  async getMessages(params: { chatId: string, from: Date }) {
+    const messages = await Message.find({
+      chat: params.chatId,
+      date: { $gte: params.from },
+    }).populate('user');
+
+    return messages;
+  }
 }
 
 export default new MessageRepository();

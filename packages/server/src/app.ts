@@ -8,6 +8,7 @@ import errorsLogger from './middlewares/errorsLogger';
 import cookieParser from 'cookie-parser';
 
 import noEndpointHandler from './middlewares/noEndpointHandler';
+import websockets from './websockets';
 
 const initalizeApp = () => {
   const PORT = process.env.PORT || 5000;
@@ -22,7 +23,18 @@ const initalizeApp = () => {
 
   app.use(errorsLogger);
 
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  const server = app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+    if (process.send) {
+      process.send('Hello');
+    }
+  });
+
+  websockets(server);
+
+  process.on('message', (message) => {
+    console.log(message);
+  });
 };
 
 export default initalizeApp;
