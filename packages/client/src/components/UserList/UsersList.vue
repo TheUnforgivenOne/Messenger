@@ -2,22 +2,26 @@
 import { defineComponent, PropType } from 'vue';
 import { IUser } from 'monorepo-shared';
 import RequestBuilder from '../../utils/RequestBuilder';
+import store from '../../store';
 
 export default defineComponent({
   props: {
     users: { type: Array as PropType<IUser[]>, required: true },
     searching: { type: Boolean, required: true },
     fetchChats: { type: Function as PropType<() => void>, required: true },
+    clearSearch: { type: Function as PropType<() => void>, required: true },
   },
 
   methods: {
     async createChat(user: IUser) {
-      await RequestBuilder.post({
+      const response = await RequestBuilder.post({
         endpoint: '/chat/new',
         body: { users: [user._id] },
       });
 
+      store.methods.setSelectedChat(response.data.chat._id);
       this.fetchChats();
+      this.clearSearch();
     },
   },
 });

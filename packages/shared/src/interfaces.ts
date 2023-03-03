@@ -33,7 +33,7 @@ export interface IMessage extends Omit<IMessageCreate, 'user' | 'chat'> {
 
 // Chat interfaces
 export interface IChatCreate {
-  title: string;
+  title?: string;
   users: string[];
 }
 export interface IChat extends Omit<IChatCreate, 'users'> {

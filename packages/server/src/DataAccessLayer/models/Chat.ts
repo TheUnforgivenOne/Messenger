@@ -2,10 +2,7 @@ import { Schema, Types, model } from 'mongoose';
 import { IChat } from 'monorepo-shared';
 
 const ChatSchema = new Schema<IChat>({
-  title: {
-    type: String,
-    required: true,
-  },
+  title: { type: String },
   users: {
     type: [Types.ObjectId],
     ref: 'User',

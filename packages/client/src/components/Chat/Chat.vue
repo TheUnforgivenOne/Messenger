@@ -1,19 +1,20 @@
 <script lang="ts">
 import { IChat } from 'monorepo-shared';
 import { defineComponent } from 'vue';
-import store, { IStore } from '../../store';
 import RequestBuilder from '../../utils/RequestBuilder';
 
 interface ChatState {
-  store: IStore;
   chat?: IChat;
   message: string;
 }
 
 export default defineComponent({
+  props: {
+    chatId: { type: String, required: true },
+  },
+
   data(): ChatState {
     return {
-      store,
       chat: undefined,
       message: '',
     };
@@ -25,29 +26,32 @@ export default defineComponent({
         endpoint: `/chat/${chatId}`,
       });
 
-      console.log(response);
       this.chat = response?.data?.chat;
     },
 
     async sendMesage() {
-      const response = await RequestBuilder.post({
+      await RequestBuilder.post({
         endpoint: '/message',
         body: { message: this.message, chat: this.chat?._id },
       });
 
-      console.log(response);
       this.message = '';
+      this.fetchChat(this.chatId);
     },
   },
 
   watch: {
-    'store.selectedChat'(newChatId) {
+    chatId(newChatId?: string) {
       if (newChatId) {
         this.fetchChat(newChatId);
       } else {
         this.chat = undefined;
       }
     },
+  },
+
+  mounted() {
+    this.fetchChat(this.chatId);
   },
 });
 </script>
@@ -59,6 +63,7 @@ export default defineComponent({
         {{ message.user?.username }} {{ message.message }}
       </v-list-item>
     </v-list>
+
     <v-container class="d-flex align-center">
       <v-text-field
         v-model="message"

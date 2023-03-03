@@ -52,7 +52,7 @@ export default defineComponent({
       if (response?.error) {
         this.toast.error(response.message);
       } else {
-        store.methods.setToken(response.data?.token);
+        store.methods.setUser(response.data?.user);
 
         this.toast.success(response.message);
         this.toggleDialog(false);
@@ -104,7 +104,6 @@ export default defineComponent({
           />
           <v-text-field
             label="Password"
-            type="password"
             variant="outlined"
             v-model="user.password"
             :error-messages="errors.password"

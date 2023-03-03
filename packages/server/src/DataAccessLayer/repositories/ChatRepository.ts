@@ -26,7 +26,7 @@ class ChatRepository {
   async getChatsByUser(userId: string) {
     const chats = await Chat.find({ users: { $in: [userId] } })
       .populate('users')
-      .populate('messages');
+      .populate({ path: 'messages', populate: { path: 'user' } });
 
     return chats;
   }

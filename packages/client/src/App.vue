@@ -1,5 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
+import store, { IStore } from './store';
 
 import AppBar from './components/AppBar/AppBar.vue';
 import SideBar from './components/SideBar/SideBar.vue';
@@ -11,6 +12,12 @@ export default defineComponent({
     SideBar,
     Chat,
   },
+
+  data() {
+    return {
+      store,
+    };
+  },
 });
 </script>
 
@@ -18,10 +25,10 @@ export default defineComponent({
   <v-card class="w-75 mx-auto">
     <v-layout>
       <app-bar />
-      <side-bar />
+      <side-bar v-if="store.user" />
 
       <v-main class="h-screen">
-        <chat />
+        <chat v-if="store.selectedChat" :chat-id="store.selectedChat" />
       </v-main>
     </v-layout>
   </v-card>

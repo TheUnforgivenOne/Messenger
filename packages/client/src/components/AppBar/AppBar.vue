@@ -1,6 +1,5 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { IUser } from 'monorepo-shared';
 import store, { IStore } from '../../store';
 
 import SignIn from './Auth/SignIn.vue';
@@ -11,7 +10,6 @@ import parseCookie from '../../utils/parseCookie';
 
 interface AppBarState {
   store: IStore;
-  user: IUser | null;
 }
 
 export default defineComponent({
@@ -23,32 +21,28 @@ export default defineComponent({
   data(): AppBarState {
     return {
       store,
-      user: null,
     };
   },
 
   methods: {
     async getMyInfo() {
       const response = await RequestBuilder.get({ endpoint: '/user/me' });
-      this.user = response.data.user || null;
+      store.methods.setUser(response?.data?.user);
     },
 
     async onSignOut() {
       await RequestBuilder.post({ endpoint: '/user/signout' });
-      store.methods.setToken();
-      this.user = null;
+      store.methods.setUser();
+      store.methods.setSelectedChat();
     },
   },
 
   mounted() {
     const cookie = parseCookie(document.cookie);
-    store.methods.setToken(cookie?.token);
-  },
-
-  watch: {
-    'store.token'() {
-      store.token && this.getMyInfo();
-    },
+    console.log(cookie);
+    if (cookie?.token) {
+      this.getMyInfo();
+    }
   },
 });
 </script>
@@ -58,8 +52,10 @@ export default defineComponent({
     <v-app-bar-title>Messenger</v-app-bar-title>
 
     <template v-slot:append class="mr-4">
-      <div v-show="user">
-        <span class="ext-subtitle-1 mr-2">Hello, {{ user?.username }}</span>
+      <div v-if="store?.user">
+        <span class="ext-subtitle-1 mr-2">
+          Hello, {{ store?.user?.username }}
+        </span>
 
         <v-menu location="bottom">
           <template v-slot:activator="{ props }">
@@ -75,7 +71,7 @@ export default defineComponent({
         </v-menu>
       </div>
 
-      <div v-show="!store.token">
+      <div v-else>
         <sign-in />
         <sign-up />
       </div>

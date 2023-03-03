@@ -1,13 +1,16 @@
 <script lang="ts">
 import { IChat, IUser } from 'monorepo-shared';
 import { defineComponent } from 'vue';
+import store, { IStore } from '../../store';
+
 import RequestBuilder from '../../utils/RequestBuilder';
 import UsersList from '../UserList/UsersList.vue';
 import ChatsList from '../ChatsList/ChatsList.vue';
 
 interface SideBarState {
-  search: string | null;
+  search: string;
   searching: boolean;
+  store: IStore;
   users: IUser[];
   chats: IChat[];
   _timerId: NodeJS.Timeout | null;
@@ -21,8 +24,9 @@ export default defineComponent({
 
   data(): SideBarState {
     return {
-      search: null,
+      search: '',
       searching: false,
+      store,
       users: [],
       chats: [],
       _timerId: null,
@@ -45,7 +49,7 @@ export default defineComponent({
     },
 
     async fetchChats() {
-      const response = await RequestBuilder.get({ endpoint: '/chat/my' });
+      const response = await RequestBuilder.get({ endpoint: '/chat/my_chats' });
 
       this.chats = response.data.chats;
     },
@@ -59,6 +63,15 @@ export default defineComponent({
         this._timerId && clearTimeout(this._timerId);
         this.searching = false;
         this.users = [];
+      }
+    },
+
+    'store.user'(user?: IUser) {
+      if (user) {
+        this.fetchChats();
+      } else {
+        this.search = '';
+        this.chats = [];
       }
     },
   },
@@ -83,12 +96,13 @@ export default defineComponent({
     </v-container>
 
     <users-list
+      v-if="search"
       :users="users"
       :searching="searching"
       :fetch-chats="fetchChats"
-      v-if="search"
+      :clear-search="() => (search = '')"
     />
 
-    <chats-list :chats="chats" v-else />
+    <chats-list v-else :chats="chats" />
   </v-navigation-drawer>
 </template>

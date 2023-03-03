@@ -26,7 +26,10 @@ class UserService {
 
     const token = this.generateJwt(newUser._id.toString());
 
-    return { message: `User ${newUser.username} created`, data: { token } };
+    return {
+      message: `User ${newUser.username} created`,
+      data: { token, user: newUser },
+    };
   }
 
   async signInUser(loginCreds: ISignInParams) {
@@ -45,7 +48,7 @@ class UserService {
 
     const token = this.generateJwt(user._id.toString());
 
-    return { message: 'Logged in', data: { token } };
+    return { message: 'Logged in', data: { token, user } };
   }
 
   async getUsers(query: UserQueryParamsType) {

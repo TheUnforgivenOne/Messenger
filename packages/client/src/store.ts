@@ -1,21 +1,23 @@
+import { IUser } from './../../shared/src/interfaces';
 import { reactive } from 'vue';
 
 export interface IStore {
-  token?: string;
   selectedChat?: string;
+  user?: IUser;
+
   methods: any;
 }
 
 const store = reactive<IStore>({
-  token: undefined,
   selectedChat: undefined,
+  user: undefined,
 
   methods: {
-    setToken(newToken?: string) {
-      store.token = newToken;
-    },
     setSelectedChat(chatId?: string) {
       store.selectedChat = chatId;
+    },
+    setUser(newUser?: IUser) {
+      store.user = newUser;
     },
   },
 });
