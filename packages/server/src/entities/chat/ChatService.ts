@@ -12,8 +12,14 @@ class ChatService {
     return { message: 'New chat created', data: { newChat } };
   }
 
-  async getChats(userId: string) {
-    const chats = await ChatRepository.getChats(userId);
+  async getChat(chatId: string) {
+    const chat = await ChatRepository.getChat(chatId);
+
+    return { data: { chat } };
+  }
+
+  async getChatsByUser(userId: string) {
+    const chats = await ChatRepository.getChatsByUser(userId);
 
     return { data: { chats } };
   }

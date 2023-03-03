@@ -20,7 +20,7 @@ type AddQueryParams = {
 class RequestsBuilder {
   private API_PREFIX = '/api';
   private addQuery({ endpoint, query }: AddQueryParams): string {
-    let url = `${this.API_PREFIX}/${endpoint}`;
+    let url = `${this.API_PREFIX}${endpoint}`;
     if (query && Object.keys(query).length) {
       url += `?${new URLSearchParams(query).toString()}`;
     }

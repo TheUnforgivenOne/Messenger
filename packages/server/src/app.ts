@@ -1,6 +1,7 @@
 import express, { Express, json } from 'express';
 import UserRouter from './entities/user/UserRouter';
 import ChatRouter from './entities/chat/ChatRouter';
+import MessageRouter from './entities/message/MessageRouter';
 
 import requestsLogger from './middlewares/requestsLogger';
 import errorsLogger from './middlewares/errorsLogger';
@@ -17,6 +18,7 @@ const initalizeApp = () => {
 
   app.use('/user', UserRouter);
   app.use('/chat', ChatRouter);
+  app.use('/message', MessageRouter);
   app.use(noEndpointHandler);
 
   app.use(errorsLogger);

@@ -45,7 +45,7 @@ export default defineComponent({
     },
 
     async fetchChats() {
-      const response = await RequestBuilder.get({ endpoint: '/chat' });
+      const response = await RequestBuilder.get({ endpoint: '/chat/my' });
 
       this.chats = response.data.chats;
     },
@@ -77,6 +77,7 @@ export default defineComponent({
         variant="underlined"
         placeholder="Search for user"
         clearable
+        hide-details
       />
       <v-progress-circular indeterminate v-show="searching" />
     </v-container>

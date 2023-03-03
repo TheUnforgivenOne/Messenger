@@ -18,15 +18,17 @@ export interface IUser extends IUserCreate {
 
 // Message interfaces
 export interface IMessageCreate {
+  message: string;
+  user: string;
+  chat: string;
+}
+export interface IMessage extends Omit<IMessageCreate, 'user' | 'chat'> {
+  _id: string;
   date: Date;
   sent: boolean;
   viewed: boolean;
-  message: string;
-  user: string;
-}
-export interface IMessage extends Omit<IMessageCreate, 'user'> {
-  _id: string;
   user: IUser;
+  chat: IChat;
 }
 
 // Chat interfaces
@@ -35,6 +37,7 @@ export interface IChatCreate {
   users: string[];
 }
 export interface IChat extends Omit<IChatCreate, 'users'> {
+  _id: string;
   users: IUser[];
   messages: IMessage[];
 }

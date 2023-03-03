@@ -1,4 +1,4 @@
-import { IChatCreate } from 'monorepo-shared';
+import { IChatCreate, IMessage } from 'monorepo-shared';
 import Chat from '../models/Chat';
 
 class ChatRepository {
@@ -8,10 +8,25 @@ class ChatRepository {
     return newChat;
   }
 
-  async getChats(userId: string) {
-    const chats = await Chat.find({ users: { $in: [userId] } }).populate(
-      'users'
-    );
+  async inserMessage(chatId: string, message: IMessage) {
+    const chat = await this.getChat(chatId);
+
+    chat?.messages.push(message);
+    chat?.save();
+  }
+
+  async getChat(chatId: string) {
+    const chat = await Chat.findOne({ _id: chatId })
+      .populate('users')
+      .populate({ path: 'messages', populate: { path: 'user' } });
+
+    return chat;
+  }
+
+  async getChatsByUser(userId: string) {
+    const chats = await Chat.find({ users: { $in: [userId] } })
+      .populate('users')
+      .populate('messages');
 
     return chats;
   }

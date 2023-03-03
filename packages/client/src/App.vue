@@ -3,11 +3,13 @@ import { defineComponent } from 'vue';
 
 import AppBar from './components/AppBar/AppBar.vue';
 import SideBar from './components/SideBar/SideBar.vue';
+import Chat from './components/Chat/Chat.vue';
 
 export default defineComponent({
   components: {
     AppBar,
     SideBar,
+    Chat,
   },
 });
 </script>
@@ -19,9 +21,7 @@ export default defineComponent({
       <side-bar />
 
       <v-main class="h-screen">
-        <v-container>
-          loh
-        </v-container>
+        <chat />
       </v-main>
     </v-layout>
   </v-card>

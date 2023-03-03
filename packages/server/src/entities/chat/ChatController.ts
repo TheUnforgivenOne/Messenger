@@ -12,8 +12,16 @@ class ChatController {
   }
 
   @catchErrors
-  async getChats(req: Request, res: Response) {
-    const resposne = await ChatService.getChats(req.userId);
+  async getChat(req: Request, res: Response) {
+    const { chatId } = req.params;
+    const response = await ChatService.getChat(chatId);
+
+    res.json(response);
+  }
+
+  @catchErrors
+  async getChatsByUser(req: Request, res: Response) {
+    const resposne = await ChatService.getChatsByUser(req.userId);
 
     res.json(resposne);
   }
