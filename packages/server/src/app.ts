@@ -9,9 +9,8 @@ import cookieParser from 'cookie-parser';
 
 import noEndpointHandler from './middlewares/noEndpointHandler';
 
-const PORT = process.env.PORT || 5000;
-
 const initalizeApp = () => {
+  const PORT = process.env.PORT || 5000;
   const app: Express = express();
 
   app.use(requestsLogger, json(), cookieParser());
