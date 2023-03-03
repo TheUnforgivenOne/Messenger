@@ -9,4 +9,4 @@ node_modules
 **/.vscode
 
 # Local secrets
-**/.env.local
+**/.env
