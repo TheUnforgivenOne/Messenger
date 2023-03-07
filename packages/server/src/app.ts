@@ -25,16 +25,9 @@ const initalizeApp = () => {
 
   const server = app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
-    if (process.send) {
-      process.send('Hello');
-    }
   });
 
   websockets(server);
-
-  process.on('message', (message) => {
-    console.log(message);
-  });
 };
 
 export default initalizeApp;

@@ -6,7 +6,6 @@ import RequestBuilder from '../../utils/RequestBuilder';
 interface ChatState {
   chat?: IChat;
   message: string;
-  from?: Date;
   ws?: WebSocket;
 }
 
@@ -19,30 +18,50 @@ export default defineComponent({
     return {
       chat: undefined,
       message: '',
-      from: undefined,
       ws: undefined,
     };
   },
 
   methods: {
-    async fetchChat(chatId: string) {
-      const response = await RequestBuilder.get({
-        endpoint: `/chat/${chatId}`,
-      });
+    async enterChat() {
+      if (this.ws) this.ws.close();
 
-      this.chat = response?.data?.chat;
+      this.ws = new WebSocket(`ws://localhost:5005/chat?chatId=${this.chatId}`);
+
+      this.ws.onopen = () => {
+        this.ws?.send(
+          JSON.stringify({
+            type: 'GET_CHAT',
+            data: { chatId: this.chatId },
+          })
+        );
+      };
+
+      this.ws.onmessage = (e) => {
+        const parsedData = JSON.parse(e.data);
+        if (!parsedData) return;
+
+        const { type, data } = parsedData;
+        if (type === 'GET_CHAT') {
+          this.chat = data;
+        }
+
+        if (type === 'NEW_MESSAGE') {
+          this.chat?.messages?.push(data);
+        }
+      };
     },
 
     async sendMesage() {
-      await RequestBuilder.post({
-        endpoint: '/message',
-        body: { message: this.message, chat: this.chat?._id },
-      });
-
-      // this.fetchChat(this.chatId);
-      // this.ws?.send(
-      //   JSON.stringify({ message: this.message, chat: this.chatId })
-      // );
+      this.ws?.send(
+        JSON.stringify({
+          type: 'NEW_MESSAGE',
+          data: {
+            chatId: this.chatId,
+            message: this.message,
+          },
+        })
+      );
       this.message = '';
     },
   },
@@ -50,7 +69,7 @@ export default defineComponent({
   watch: {
     chatId(newChatId?: string) {
       if (newChatId) {
-        this.fetchChat(newChatId);
+        this.enterChat();
       } else {
         this.chat = undefined;
       }
@@ -58,21 +77,7 @@ export default defineComponent({
   },
 
   mounted() {
-    this.fetchChat(this.chatId);
-    this.ws = new WebSocket('ws://localhost:5005/ws');
-
-    this.ws.onopen = (e) => {
-      console.log(e);
-    };
-
-    this.ws.onmessage = (e) => {
-      this.chat?.messages?.push(...JSON.parse(e.data));
-    };
-
-    setInterval(() => {
-      this.ws?.send(JSON.stringify({ chatId: this.chatId, from: this.from }));
-      this.from = new Date();
-    }, 1000);
+    this.enterChat();
   },
 
   onBeforeUnmount() {
