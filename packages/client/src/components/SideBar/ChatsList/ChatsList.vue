@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import { IChat } from 'monorepo-shared';
-import store, { IStore } from '../../store';
+import store, { IStore } from '../../../store';
 import { getTitleFromUsers } from './utils';
 
 interface ChatListState {

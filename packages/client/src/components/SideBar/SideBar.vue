@@ -4,8 +4,8 @@ import { defineComponent } from 'vue';
 import store, { IStore } from '../../store';
 
 import RequestBuilder from '../../utils/RequestBuilder';
-import UsersList from '../UserList/UsersList.vue';
-import ChatsList from '../ChatsList/ChatsList.vue';
+import UsersList from './UserList/UsersList.vue';
+import ChatsList from './ChatsList/ChatsList.vue';
 
 interface SideBarState {
   search: string;

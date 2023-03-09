@@ -18,7 +18,10 @@ class ChatRepository {
   async getChat(chatId: string) {
     const chat = await Chat.findOne({ _id: chatId })
       .populate('users')
-      .populate({ path: 'messages', populate: { path: 'user' } });
+      .populate({
+        path: 'messages',
+        populate: { path: 'user' },
+      });
 
     return chat;
   }
@@ -26,7 +29,11 @@ class ChatRepository {
   async getChatsByUser(userId: string) {
     const chats = await Chat.find({ users: { $in: [userId] } })
       .populate('users')
-      .populate({ path: 'messages', populate: { path: 'user' } });
+      .populate({
+        path: 'messages',
+        options: { sort: { date: -1 }, limit: 1 },
+        populate: { path: 'user' },
+      });
 
     return chats;
   }

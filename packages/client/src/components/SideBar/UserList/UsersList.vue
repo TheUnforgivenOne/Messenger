@@ -1,8 +1,8 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import { IUser } from 'monorepo-shared';
-import RequestBuilder from '../../utils/RequestBuilder';
-import store from '../../store';
+import RequestBuilder from '../../../utils/RequestBuilder';
+import store from '../../../store';
 
 export default defineComponent({
   props: {

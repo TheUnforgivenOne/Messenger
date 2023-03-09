@@ -16,7 +16,9 @@ interface IWS extends WebSocket.WebSocket {
 
 const parseQuery = (url?: string): { [key: string]: string } => {
   if (!url) return {};
-  const query = url.split('?')[1];
+  const query = url.split('?')?.[1];
+
+  if (!query) return {};
   const params = query.split('&');
 
   return params.reduce((acc, param) => {
