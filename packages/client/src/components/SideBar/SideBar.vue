@@ -1,5 +1,5 @@
 <script lang="ts">
-import { IChat, IUser } from 'monorepo-shared';
+import { IChat, IUser, WS_EVENTS } from 'monorepo-shared';
 import { defineComponent } from 'vue';
 import store, { IStore } from '../../store';
 
@@ -12,7 +12,6 @@ interface SideBarState {
   searching: boolean;
   store: IStore;
   users: IUser[];
-  chats: IChat[];
   _timerId: NodeJS.Timeout | null;
 }
 
@@ -28,7 +27,6 @@ export default defineComponent({
       searching: false,
       store,
       users: [],
-      chats: [],
       _timerId: null,
     };
   },
@@ -47,12 +45,6 @@ export default defineComponent({
         this.searching = false;
       }, 500);
     },
-
-    async fetchChats() {
-      const response = await RequestBuilder.get({ endpoint: '/chat/my_chats' });
-
-      this.chats = response.data.chats;
-    },
   },
 
   watch: {
@@ -66,18 +58,10 @@ export default defineComponent({
       }
     },
 
-    'store.user'(user?: IUser) {
-      if (user) {
-        this.fetchChats();
-      } else {
-        this.search = '';
-        this.chats = [];
-      }
+    'store.user'() {
+      this.search = '';
+      store.methods.setChats([]);
     },
-  },
-
-  mounted() {
-    this.fetchChats();
   },
 });
 </script>
@@ -99,10 +83,9 @@ export default defineComponent({
       v-if="search"
       :users="users"
       :searching="searching"
-      :fetch-chats="fetchChats"
       :clear-search="() => (search = '')"
     />
 
-    <chats-list v-else :chats="chats" />
+    <chats-list v-else />
   </v-navigation-drawer>
 </template>

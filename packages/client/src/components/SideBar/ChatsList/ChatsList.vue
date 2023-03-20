@@ -1,18 +1,14 @@
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
-import { IChat } from 'monorepo-shared';
+import { defineComponent } from 'vue';
+import { WS_EVENTS } from 'monorepo-shared';
 import store, { IStore } from '../../../store';
-import { getTitleFromUsers } from './utils';
+import { getTitleFromUsers, getLastMessage } from './utils';
 
 interface ChatListState {
   store: IStore;
 }
 
 export default defineComponent({
-  props: {
-    chats: { type: Array as PropType<IChat[]>, required: true },
-  },
-
   data(): ChatListState {
     return {
       store,
@@ -21,18 +17,16 @@ export default defineComponent({
 
   methods: {
     selectChat(id?: string) {
-      store.methods.setSelectedChat(id);
+      store.socketManager?.send(WS_EVENTS.GET_CHAT, { id });
     },
   },
 
   computed: {
     chatList() {
-      return this.chats?.map((chat) => ({
+      return store.chats?.map((chat) => ({
         ...chat,
         title: chat?.title ?? getTitleFromUsers(chat.users, store.user?._id),
-        lastMessage: chat.messages.length
-          ? `${chat.messages[0].user.username}: ${chat.messages[0].message}`
-          : 'No messages yet',
+        lastMessage: getLastMessage(chat),
       }));
     },
   },

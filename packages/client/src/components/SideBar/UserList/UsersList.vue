@@ -8,7 +8,7 @@ export default defineComponent({
   props: {
     users: { type: Array as PropType<IUser[]>, required: true },
     searching: { type: Boolean, required: true },
-    fetchChats: { type: Function as PropType<() => void>, required: true },
+    // fetchChats: { type: Function as PropType<() => void>, required: true },
     clearSearch: { type: Function as PropType<() => void>, required: true },
   },
 
@@ -19,8 +19,8 @@ export default defineComponent({
         body: { users: [user._id] },
       });
 
-      store.methods.setSelectedChat(response.data.chat._id);
-      this.fetchChats();
+      // store.methods.setChat(response.data.chat._id);
+      // this.fetchChats();
       this.clearSearch();
     },
   },

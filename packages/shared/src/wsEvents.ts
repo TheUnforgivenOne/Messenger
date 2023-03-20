@@ -1,0 +1,5 @@
+export enum WS_EVENTS {
+  GET_CHATS = 'GET_CHATS',
+  GET_CHAT = 'GET_CHAT',
+  CREATE_MESSAGE = 'CREATE_MESSAGE',
+}

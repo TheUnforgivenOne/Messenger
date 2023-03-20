@@ -1,13 +1,12 @@
 <script lang="ts">
-import { IChat } from 'monorepo-shared';
+import { IChat, WS_EVENTS } from 'monorepo-shared';
+import store, { IStore } from '../../store';
 import { defineComponent } from 'vue';
 import Message from './Message.vue';
 
 interface ChatState {
-  chat?: IChat;
   message: string;
-  loading: boolean;
-  ws?: WebSocket;
+  store: IStore;
 }
 
 export default defineComponent({
@@ -15,74 +14,30 @@ export default defineComponent({
     Message,
   },
 
-  props: {
-    chatId: { type: String, required: true },
-  },
-
   data(): ChatState {
     return {
-      chat: undefined,
       message: '',
-      loading: false,
-      ws: undefined,
+      store,
     };
   },
 
   methods: {
-    async enterChat() {
-      this.loading = true;
-      if (this.ws) this.ws.close();
-
-      this.ws = new WebSocket(`ws://localhost:5005/chat?chatId=${this.chatId}`);
-
-      this.ws.onopen = () => {
-        this.ws?.send(
-          JSON.stringify({
-            type: 'GET_CHAT',
-            data: { chatId: this.chatId },
-          })
-        );
-      };
-
-      this.ws.onmessage = (e) => {
-        const parsedData = JSON.parse(e.data);
-        if (!parsedData) return;
-
-        const { type, data } = parsedData;
-        if (type === 'GET_CHAT') {
-          this.chat = data;
-          this.loading = false;
-        }
-
-        if (type === 'NEW_MESSAGE') {
-          this.chat?.messages?.push(data);
-        }
-      };
-    },
-
     async sendMesage() {
-      this.ws?.send(
-        JSON.stringify({
-          type: 'NEW_MESSAGE',
-          data: {
-            chatId: this.chatId,
-            message: this.message,
-          },
-        })
-      );
+      store.socketManager?.send(WS_EVENTS.CREATE_MESSAGE, {
+        chatId: store.chatId,
+        message: this.message,
+      });
       this.message = '';
     },
   },
 
-  watch: {
-    chatId(newChatId?: string) {
-      if (newChatId) {
-        this.enterChat();
-      } else {
-        this.chat = undefined;
-      }
+  computed: {
+    chat() {
+      return store.chats.find(({ _id }) => _id === store.chatId);
     },
+  },
 
+  watch: {
     'chat.messages.length'() {
       this.$nextTick(() => {
         // @ts-ignore
@@ -91,27 +46,17 @@ export default defineComponent({
       });
     },
   },
-
-  mounted() {
-    this.enterChat();
-  },
-
-  beforeUnmount() {
-    this.ws?.close();
-  },
 });
 </script>
 
 <template>
   <v-container class="d-flex flex-column h-100">
     <v-container ref="chatRef" class="flex-grow-1 overflow-auto pa-0">
-      <v-progress-circular v-if="loading" indeterminate />
-
-      <v-sheet v-else-if="!chat?.messages?.length">Type first message</v-sheet>
+      <v-sheet v-if="!chat?.messages?.length">Type first message</v-sheet>
 
       <v-list v-else>
         <message
-          v-for="message in chat?.messages"
+          v-for="message in chat.messages"
           :key="message._id"
           :message="message"
         />

@@ -33,7 +33,7 @@ export default defineComponent({
     async onSignOut() {
       await RequestBuilder.post({ endpoint: '/user/signout' });
       store.methods.setUser();
-      store.methods.setSelectedChat();
+      store.methods.setChat();
     },
   },
 
